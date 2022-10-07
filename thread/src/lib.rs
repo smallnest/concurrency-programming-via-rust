@@ -1,3 +1,3 @@
-pub mod stdthread;
+pub mod threads;
 
-pub use stdthread::*;
+pub use threads::*;

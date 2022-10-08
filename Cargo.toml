@@ -1,2 +1,2 @@
 [workspace]
-members = ["thread", "future", "pool"]
+members = ["thread", "asyncwait", "pool"]

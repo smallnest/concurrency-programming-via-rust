@@ -1,5 +1,5 @@
-use collections;
+use collections::*;    
 
 fn main() {
-    println!("Hello, world!");
+    common_thread_safe_collections();
 }

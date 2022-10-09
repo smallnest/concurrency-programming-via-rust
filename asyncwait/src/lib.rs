@@ -1,6 +1,8 @@
 pub mod asyncio;
+pub mod future;
 
 pub use asyncio::*;
+pub use future::*;
 
 use futures::channel::mpsc;
 use futures::executor::{self, ThreadPool};

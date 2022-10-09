@@ -28,5 +28,7 @@ fn main() {
     go_thread();
 
     park_thread();
+
+    panic_example();
 }
 

@@ -7,6 +7,8 @@ fn main() {
     async_std();
     smol_async();
 
+    timefuture_async();
+    
     join();
     select();
 

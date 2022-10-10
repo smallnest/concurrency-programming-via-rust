@@ -1,3 +1,5 @@
+use special::*;
+
 fn main() {
-    println!("Hello, world!");
+    process_lock();
 }

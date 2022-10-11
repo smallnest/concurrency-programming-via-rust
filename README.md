@@ -17,12 +17,12 @@
 
 ## chapter 8: parking_lot
 
-## chapter 9: xxxx
-
+## chapter 9: crossbeam
 
 ## chapter 10: xxxx
 
+## chapter 11: xxxx
 
-## ## chapter n: special
+## chapter n: special
 
-some special synchronization primitives and concurrency libs.
+some special synchronization primitives and concurrency libs only for special single purpose.

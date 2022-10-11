@@ -1,2 +1,2 @@
 [workspace]
-members = ["thread", "pool", "asyncwait", "primitive", "collections", "process", "syncs", "channel","parking_lot_examples", "special"]
+members = ["thread", "pool", "asyncwait", "primitive", "collections", "process", "syncs", "channel","parking_lot_examples", "crossbeam_examples", "special"]

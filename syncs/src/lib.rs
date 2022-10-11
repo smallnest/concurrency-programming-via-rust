@@ -8,7 +8,6 @@ pub mod barrier;
 pub mod cond;
 pub mod mpsc;
 pub mod atomic;
- 
 
 pub use arc::*;
 pub use mutex::*;

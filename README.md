@@ -5,7 +5,7 @@
 
 ## chapter 2: Thread Pool
 
-## chapter 3: async
+## chapter 3: async/.await
 
 ## chapter 4: synchronization primitives
 
@@ -15,13 +15,15 @@
 
 ## chapter 7: channel
 
-## chapter 8: parking_lot
+## chapter 8: timer/ticker
 
-## chapter 9: crossbeam
+## chapter 9: parking_lot
 
-## chapter 10: xxxx
+## chapter 10: crossbeam
 
-## chapter 11: xxxx
+## chapter 11: rayon
+
+## chapter 12: tokio
 
 ## chapter n: special
 

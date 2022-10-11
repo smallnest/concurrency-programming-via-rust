@@ -1,0 +1,9 @@
+use timer_examples::*;
+
+fn main() {
+    timer_schedule_with_delay();
+    timer_schedule_with_date();
+    timer_repeat();
+
+    safina_timer_example();
+}

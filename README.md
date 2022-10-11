@@ -15,7 +15,7 @@
 
 ## chapter 7: channel
 
-## chapter 8: xxxx
+## chapter 8: parking_lot
 
 ## chapter 9: xxxx
 

@@ -14,5 +14,7 @@ fn main() {
 
     stream();
 
+    kviterator_example();
 
+    async_trait_example();
 }

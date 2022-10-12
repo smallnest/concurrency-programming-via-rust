@@ -9,6 +9,8 @@ edition = "2021"
 anyhow = "1.0.65"
 async-std = "1.12.0"
 async-stream = "0.3.3"
+async-trait = "0.1.57"
+bytes = "1.2.1"
 futures = { version = "0.3.24", features = ["executor", "thread-pool"] } 
 futures-lite = "1.12.0"
 futures-util = "0.3.24"

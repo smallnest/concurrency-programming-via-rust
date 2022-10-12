@@ -1,5 +1,4 @@
-use primitive::*;
-use std::thread;
+use container_primitive::*;
 
 fn main() {
     cow_example();

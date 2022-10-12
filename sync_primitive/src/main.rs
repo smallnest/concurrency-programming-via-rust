@@ -1,4 +1,4 @@
-use syncs::*;
+use sync_primitive::*;
 
 fn main() {
     arc_example();

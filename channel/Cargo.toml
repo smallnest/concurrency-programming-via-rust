@@ -12,5 +12,7 @@ atomic_mpmc = "0.2.0"
 broadcaster = "1.0.0"
 crossfire = "0.1.7"
 flume = "0.10.14"
+futures = "0.3.24"
+futures-channel = "0.3.24"
 futures-util = "0.3.24"
 tokio = { version = "1.21.2", features = ["full"] }

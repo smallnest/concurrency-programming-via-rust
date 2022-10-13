@@ -11,6 +11,7 @@ fn main() {
     
     join();
     select();
+    futures_select();
 
     stream();
 

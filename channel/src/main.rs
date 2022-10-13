@@ -12,4 +12,6 @@ fn main() {
     flume_example();
     async_channel_example();
     async_priority_channel_example();
+    futures_channel_mpsc_example();
+    futures_channel_oneshot_example();
 }

@@ -1,4 +1,3 @@
-
 use futures::channel::mpsc;
 use futures::executor::{self, ThreadPool};
 use futures::try_join;
@@ -8,7 +7,6 @@ use futures::{
     pin_mut,
     select,
 };
-
 
 pub fn tokio_async() {
     let rt = tokio::runtime::Runtime::new().unwrap();
@@ -92,5 +90,25 @@ pub fn select() {
             _x = t1 => println!("select get_book"),
             _y = t2 => println!("select get_music"),
         }
+    });
+}
+
+pub fn futures_select() {
+    futures_lite::future::block_on(async {
+        use futures::future;
+
+        let mut a_fut = future::ready(4);
+        let mut b_fut = future::ready(6);
+        let mut total = 0;
+
+        loop {
+            select! {
+                a = a_fut => total += a,
+                b = b_fut => total += b,
+                complete => {println!("complete"); break},
+                default => unreachable!(), // never runs (futures are ready, then complete)
+            };
+        }
+        assert_eq!(total, 10);
     });
 }

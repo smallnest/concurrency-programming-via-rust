@@ -1,22 +1,20 @@
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
-use std::sync::Arc;
+use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::mpsc::channel;
+use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
-use std::sync::atomic::{AtomicI64, Ordering};
 
-use send_wrapper::SendWrapper;
-use thread_amount::thread_amount;
-use thread_priority::*;
 use crossbeam::thread as crossbeam_thread;
-use thread_control::*;
-use affinity::*;
-use rayon;
 use go_spawn::{go, join};
 use parking::Parker;
-
+use rayon;
+use send_wrapper::SendWrapper;
+use thread_amount::thread_amount;
+use thread_control::*;
+use thread_priority::*;
 
 pub fn start_one_thread() {
     let count = thread::available_parallelism().unwrap().get();
@@ -196,7 +194,8 @@ pub fn crossbeam_scope() {
             x += a[0] + a[2];
         });
         println!("hello from the main thread");
-    }).unwrap();
+    })
+    .unwrap();
 
     // After the scope, we can modify and access our variables again:
     a.push(4);
@@ -223,7 +222,6 @@ pub fn rayon_scope() {
     a.push(4);
     assert_eq!(x, a.len());
 }
-
 
 pub fn send_wrapper() {
     let wrapped_value = SendWrapper::new(Rc::new(42));
@@ -254,12 +252,10 @@ pub fn print_thread_amount() {
         handles.push(handle);
     }
 
-    for handle in  handles {
+    for handle in handles {
         handle.join().unwrap();
     }
-
 }
-
 
 pub fn control_thread() {
     let (flag, control) = make_pair();
@@ -281,16 +277,18 @@ pub fn control_thread() {
     println!("This thread is stopped")
 }
 
-
+#[cfg(not(target_os = "macos"))]
 pub fn use_affinity() {
-     // Select every second core
-     let cores: Vec<usize> = (0..get_core_num()).step_by(2).collect();
-     println!("Binding thread to cores : {:?}", &cores);
-     
-     set_thread_affinity(&cores).unwrap();
-     println!("Current thread affinity : {:?}", get_thread_affinity().unwrap());
-}
+    // Select every second core
+    let cores: Vec<usize> = (0..get_core_num()).step_by(2).collect();
+    println!("Binding thread to cores : {:?}", &cores);
 
+    affinity::set_thread_affinity(&cores).unwrap();
+    println!(
+        "Current thread affinity : {:?}",
+        affinity::get_thread_affinity().unwrap()
+    );
+}
 
 pub fn go_thread() {
     let counter = Arc::new(AtomicI64::new(0));
@@ -311,18 +309,18 @@ pub fn go_thread() {
 pub fn park_thread() {
     let p = Parker::new();
     let u = p.unparker();
-    
+
     // Notify the parker.
     u.unpark();
-    
+
     // Wakes up immediately because the parker is notified.
     p.park();
-    
+
     thread::spawn(move || {
         thread::sleep(Duration::from_millis(500));
         u.unpark();
     });
-    
+
     // Wakes up when `u.unpark()` notifies and then goes back into unnotified state.
     p.park();
 

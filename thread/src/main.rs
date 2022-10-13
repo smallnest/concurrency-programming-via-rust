@@ -23,6 +23,7 @@ fn main() {
 
     control_thread();
 
+    #[cfg(not(target_os = "macos"))]
     use_affinity();
 
     go_thread();
@@ -31,4 +32,3 @@ fn main() {
 
     panic_example();
 }
-

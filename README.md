@@ -45,7 +45,7 @@ Introduces [timer and ticker](timer_examples/src/main.rs).
 
 ### chapter 9: parking_lot
 
-Introduces [parkiung_lot](parking_lot_examples/src/main.rs).
+Introduces [parking_lot](parking_lot_examples/src/main.rs).
 
 ### chapter 10: crossbeam
 

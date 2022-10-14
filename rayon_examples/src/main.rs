@@ -1,3 +1,11 @@
+
+use rayon_examples::*;
+
 fn main() {
-    println!("Hello, world!");
+    rayon_par_iter();
+
+    rayon_scope_example();
+    rayon_scope_example2();
+    rayon_scopefifo_example();
+    rayon_threadpool_example();
 }

@@ -16,6 +16,9 @@ use thread_amount::thread_amount;
 use thread_control::*;
 use thread_priority::*;
 
+#[cfg(not(target_os = "macos"))]
+use affinity::*;
+
 pub fn start_one_thread() {
     let count = thread::available_parallelism().unwrap().get();
 
@@ -26,6 +29,18 @@ pub fn start_one_thread() {
     });
 
     handle.join().unwrap();
+}
+
+pub fn start_one_thread_result() {
+    let handle = thread::spawn(|| {
+        println!("Hello from a thread!");
+        200
+    });
+
+    match handle.join() {
+        Ok(v) => println!("thread result: {}", v),
+        Err(e) => println!("error: {:?}", e),
+    }
 }
 
 pub fn start_two_threads() {
@@ -41,6 +56,50 @@ pub fn start_two_threads() {
     handle2.join().unwrap();
 }
 
+pub fn start_n_threads() {
+    const N: isize = 10;
+
+    let handles: Vec<_> = (0..N)
+        .map(|i| {
+            thread::spawn(move || {
+                println!("Hello from a thread{}!", i);
+            })
+        })
+        .collect();
+
+    // handles.into_iter().for_each(|h| h.join().unwrap());
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+}
+
+pub fn current_thread() {
+    let current_thread = thread::current();
+    println!(
+        "current thread: {:?},{:?}",
+        current_thread.id(),
+        current_thread.name()
+    );
+
+    let builder = thread::Builder::new()
+        .name("foo".into()) // set thread name
+        .stack_size(32 * 1024); // set stack size
+
+    let handler = builder
+        .spawn(|| {
+            let current_thread = thread::current();
+            println!(
+                "child thread: {:?},{:?}",
+                current_thread.id(),
+                current_thread.name()
+            );
+        })
+        .unwrap();
+
+    handler.join().unwrap();
+}
+
 pub fn start_thread_with_sleep() {
     let handle1 = thread::spawn(|| {
         thread::sleep(Duration::from_millis(2000));
@@ -50,6 +109,21 @@ pub fn start_thread_with_sleep() {
     let handle2 = thread::spawn(|| {
         thread::sleep(Duration::from_millis(1000));
         println!("Hello from a thread4!");
+    });
+
+    handle1.join().unwrap();
+    handle2.join().unwrap();
+}
+
+pub fn start_thread_with_yield_now() {
+    let handle1 = thread::spawn(|| {
+        thread::yield_now();
+        println!("yield_now!");
+    });
+
+    let handle2 = thread::spawn(|| {
+        thread::yield_now();
+        println!("yield_now in another thread!");
     });
 
     handle1.join().unwrap();
@@ -97,13 +171,45 @@ pub fn start_one_thread_with_move() {
     let x = 100;
 
     let handle = thread::spawn(move || {
-        println!("Hello from a thread, x={}!", x);
+        println!("Hello from a thread with move, x={}!", x);
     });
 
     handle.join().unwrap();
+
+    let handle = thread::spawn(move|| {
+        println!("Hello from a thread with move again, x={}!", x);
+    });
+    handle.join().unwrap();
+
+    let handle = thread::spawn(|| {
+        println!("Hello from a thread without move");
+    });
+    handle.join().unwrap();
+
 }
 
-pub fn start_one_thread_with_threadlocal() {
+// pub fn start_one_thread_with_move2() {
+//     let x = vec![1, 2, 3];
+
+//     let handle = thread::spawn(move || {
+//         println!("Hello from a thread with move, x={:?}!", x);
+//     });
+
+//     handle.join().unwrap();
+
+//     let handle = thread::spawn(move|| {
+//         println!("Hello from a thread with move again, x={:?}!", x);
+//     });
+//     handle.join().unwrap();
+
+//     let handle = thread::spawn(|| {
+//         println!("Hello from a thread without move");
+//     });
+//     handle.join().unwrap();
+
+// }
+
+pub fn start_threads_with_threadlocal() {
     thread_local!(static COUNTER: RefCell<u32> = RefCell::new(1));
 
     COUNTER.with(|c| {
@@ -151,6 +257,18 @@ pub fn thread_park() {
     handle.join().unwrap();
 }
 
+pub fn thread_park2() {
+    let handle = thread::spawn(|| {
+        thread::sleep(Duration::from_millis(1000));
+        thread::park();
+        println!("Hello from a park thread in case of unpark first!");
+    });
+
+    handle.thread().unpark();
+
+    handle.join().unwrap();
+}
+
 pub fn thread_park_timeout() {
     let handle = thread::spawn(|| {
         thread::park_timeout(Duration::from_millis(1000));
@@ -158,6 +276,25 @@ pub fn thread_park_timeout() {
     });
     handle.join().unwrap();
 }
+
+// pub fn wrong_start_threads_without_scoped() {
+//     let mut a = vec![1, 2, 3];
+//     let mut x = 0;
+
+//     thread::spawn(move || {
+//         println!("hello from the first scoped thread");
+//         dbg!(&a);
+//     });
+//     thread::spawn(move || {
+//         println!("hello from the second scoped thread");
+//         x += a[0] + a[2];
+//     });
+//     println!("hello from the main thread");
+
+//     // After the scope, we can modify and access our variables again:
+//     a.push(4);
+//     assert_eq!(x, a.len());
+// }
 
 pub fn start_scoped_threads() {
     let mut a = vec![1, 2, 3];
@@ -222,6 +359,21 @@ pub fn rayon_scope() {
     a.push(4);
     assert_eq!(x, a.len());
 }
+
+
+// pub fn wrong_send() {
+//     let counter = Rc::new(42);
+
+//     let (sender, receiver) = channel();
+
+//     let _t = thread::spawn(move || {
+//         sender.send(counter).unwrap();
+//     });
+
+//     let value = receiver.recv().unwrap();
+
+//     println!("received from the main thread: {}", value);
+// }
 
 pub fn send_wrapper() {
     let wrapped_value = SendWrapper::new(Rc::new(42));
@@ -325,4 +477,21 @@ pub fn park_thread() {
     p.park();
 
     println!("park_unpark")
+}
+
+pub fn info() {
+    let count = thread::available_parallelism().unwrap().get();
+    println!("available_parallelism: {}", count);
+
+    if let Some(count) = num_threads::num_threads() {
+        println!("num_threads: {}", count);
+    } else {
+        println!("num_threads: not supported");
+    }
+
+    let count = thread_amount::thread_amount();
+    println!("thread_amount: {}", count.unwrap());
+
+    let count = num_cpus::get();
+    println!("num_cpus: {}", count);
 }

@@ -2,15 +2,24 @@ use thread::*;
 
 fn main() {
     start_one_thread();
+    start_one_thread_result();
     start_two_threads();
+    start_n_threads();
+
+    current_thread();
+    
     start_thread_with_sleep();
+    start_thread_with_yield_now();
+
     start_thread_with_priority();
     thread_builder();
 
     start_one_thread_with_move();
-    start_one_thread_with_threadlocal();
+
+    start_threads_with_threadlocal();
 
     thread_park();
+    thread_park2();
     thread_park_timeout();
 
     start_scoped_threads();
@@ -31,4 +40,7 @@ fn main() {
     park_thread();
 
     panic_example();
+    panic_caught_example();
+
+    info();
 }

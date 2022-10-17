@@ -14,4 +14,6 @@ fn main() {
     async_priority_channel_example();
     futures_channel_mpsc_example();
     futures_channel_oneshot_example();
+    kanal_example();
+    kanal_async_example();
 }

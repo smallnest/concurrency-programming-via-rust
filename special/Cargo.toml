@@ -6,4 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-lock = "2.5.0"
+concurrent-queue = "1.2.4"
+dashmap = "5.4.0"
+event-listener = "2.5.3"
 process_lock = "0.1.0"
+sharded-slab = "0.1.4"
+slab = "0.4.7"
+smol = "1.2.5"
+try-lock = "0.2.3"

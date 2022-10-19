@@ -176,7 +176,7 @@ pub fn start_one_thread_with_move() {
 
     handle.join().unwrap();
 
-    let handle = thread::spawn(move|| {
+    let handle = thread::spawn(move || {
         println!("Hello from a thread with move again, x={}!", x);
     });
     handle.join().unwrap();
@@ -185,7 +185,6 @@ pub fn start_one_thread_with_move() {
         println!("Hello from a thread without move");
     });
     handle.join().unwrap();
-
 }
 
 // pub fn start_one_thread_with_move2() {
@@ -360,7 +359,6 @@ pub fn rayon_scope() {
     assert_eq!(x, a.len());
 }
 
-
 // pub fn wrong_send() {
 //     let counter = Rc::new(42);
 
@@ -398,7 +396,9 @@ pub fn print_thread_amount() {
 
         let handle = thread::spawn(move || {
             thread::sleep(Duration::from_millis(1000));
-            println!("thread amount: {}", amount.unwrap());
+            if !amount.is_none() {
+                println!("thread amount: {}", amount.unwrap());
+            }
         });
 
         handles.push(handle);
@@ -490,7 +490,9 @@ pub fn info() {
     }
 
     let count = thread_amount::thread_amount();
-    println!("thread_amount: {}", count.unwrap());
+    if !count.is_none() {
+        println!("thread_amount: {}", count.unwrap());
+    }
 
     let count = num_cpus::get();
     println!("num_cpus: {}", count);

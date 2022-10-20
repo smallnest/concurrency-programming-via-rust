@@ -39,6 +39,13 @@ fn main() {
 
     waitgroup_example();
     wg_example();
+    awaitgroup_example();
+
+    scc_hashmap();
+    scc_hashindex();
+    scc_treeindex();
+    scc_hashset();
+    scc_queue();
 
 }
 

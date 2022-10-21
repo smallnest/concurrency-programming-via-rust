@@ -13,13 +13,15 @@ fn main() {
 
     event_listener_example();
     triggered_example();
-
+    barrage_example();
+    
     hashmap_example();
     flurry_hashmap();
     flurry_hashset();
     evmap_example();
 
     concurrent_queue_example();
+    triple_buffer_example();
 
     async_lock_mutex();
     async_lock_rwlock();
@@ -30,6 +32,8 @@ fn main() {
     portable_atomic_u128();
     portable_atomic_f64();
     atomic_float_example();
+    atomig_example();
+    atomicbox_examples();
 
     simple_mutex_example();
 

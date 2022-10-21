@@ -1,4 +1,7 @@
+use atomicbox::AtomicBox;
+use atomig::Atomic;
 use portable_atomic::*;
+use std::sync::atomic::Ordering;
 use std::sync::atomic::Ordering::Relaxed;
 
 pub fn portable_atomic_i128() {
@@ -51,4 +54,21 @@ pub fn atomic_float_example() {
     some_var.fetch_neg(Relaxed);
 
     assert_eq!(some_var.load(Relaxed), -885.0);
+}
+
+pub fn atomig_example() {
+    let some_var = Atomic::new(0);
+    some_var.store(800, Relaxed);
+
+    some_var.fetch_add(30, Relaxed);
+    some_var.fetch_sub(-55, Relaxed);
+
+    assert_eq!(some_var.load(Relaxed), 885);
+}
+
+pub fn atomicbox_examples() {
+    let atom = AtomicBox::new(Box::new("one"));
+    let mut boxed = Box::new("two");
+    atom.swap_mut(&mut boxed, Ordering::AcqRel);
+    assert_eq!(*boxed, "one");
 }

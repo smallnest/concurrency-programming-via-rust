@@ -26,7 +26,6 @@ fn main() {
     async_lock_mutex();
     async_lock_rwlock();
     async_lock_barrier();
-    async_lock_semaphore();
 
     portable_atomic_i128();
     portable_atomic_u128();
@@ -50,6 +49,14 @@ fn main() {
     scc_treeindex();
     scc_hashset();
     scc_queue();
+
+
+    async_lock_semaphore();
+    async_weighted_semaphore_example();
+    tokio_semaphore_example();
+
+    singleflight_example();
+    async_singleflight_example();
 
 }
 

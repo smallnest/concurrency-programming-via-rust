@@ -63,3 +63,6 @@ Introduces [tokio](tokio_examples/src/main.rs).
 ### chapter n: special
 
 some special synchronization primitives and concurrency libs only for special single purpose.
+
+
+- replace std::mpsc with crossbeam-channel: https://github.com/rust-lang/rust/pull/93563

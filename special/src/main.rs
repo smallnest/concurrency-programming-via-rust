@@ -58,6 +58,9 @@ fn main() {
     singleflight_example();
     async_singleflight_example();
 
+    sync_cow_example().unwrap();
+    arc_swap_example();
+
 }
 
 

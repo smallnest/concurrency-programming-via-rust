@@ -1,7 +1,6 @@
 use futures::future::join_all;
 use singleflight_async::SingleFlight;
 use std::sync::Arc;
-use std::time::Duration;
 
 use async_singleflight::Group;
 

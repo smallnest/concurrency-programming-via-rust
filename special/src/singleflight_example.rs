@@ -42,6 +42,7 @@ pub fn async_singleflight_example() {
                 let r = res.unwrap();
                 println!("{}", r);
             }));
+            
         }
 
         join_all(handlers).await;

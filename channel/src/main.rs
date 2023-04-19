@@ -8,7 +8,6 @@ fn main() {
 
     crossfire_mpsc();
     crossfire_mpmc();
-    atomic_mpmc();
     flume_example();
     async_channel_example();
     async_priority_channel_example();

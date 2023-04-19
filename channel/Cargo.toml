@@ -8,7 +8,6 @@ edition = "2021"
 [dependencies]
 async-channel = "1.7.1"
 async-priority-channel = "0.1.0"
-atomic_mpmc = "0.2.0"
 broadcaster = "1.0.0"
 crossfire = "0.1.7"
 flume = "0.10.14"

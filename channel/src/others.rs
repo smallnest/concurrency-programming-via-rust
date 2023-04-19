@@ -74,49 +74,7 @@ pub fn crossfire_mpmc() {
     });
 }
 
-// rx can't aware tx close
-pub fn atomic_mpmc() {
-    // let (tx, rx) = channel::<i32>(10);
 
-    // let mut sender_handles = vec![];
-    // for v in 0..4 {
-    //     let tx = tx.clone();
-    //     let handle = thread::spawn(move || {
-    //         for i in 0i32..10 {
-    //             if i % 5 != v {
-    //                 continue;
-    //             }
-    //             let _ = tx.send(i).unwrap();
-    //             println!("thread {} atomic_mpmc sent {}", v, i);
-    //         }
-    //     });
-
-    //     sender_handles.push(handle);
-    // }
-
-    // let mut handles = vec![];
-    // for i in 0..4 {
-    //     let rx = rx.clone();
-    //     let handle = thread::spawn(move || loop {
-    //         if let Ok(_i) = rx.recv() {
-    //             println!("atomic_mpmc thread {} recv {}", i, _i);
-    //         } else {
-    //             println!("atomic_mpmc rx closed");
-    //             break;
-    //         }
-    //     });
-    //     handles.push(handle);
-    // }
-
-    // for handle in sender_handles {
-    //     handle.join().unwrap();
-    // }
-    // drop((tx,rx));
-
-    // for handle in handles {
-    //     handle.join().unwrap();
-    // }
-}
 
 // has issues.
 pub fn broadcaster() {

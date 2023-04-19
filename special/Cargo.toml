@@ -27,7 +27,7 @@ futures = "0.3.25"
 oneshot = "0.1.5"
 portable-atomic = { version = "0.3", features=["float"] }
 process_lock = "0.1.0"
-scc = "0.11.1"
+scc = "1.5.0"
 sharded-slab = "0.1.4"
 simple-mutex = "1.1.5"
 singleflight = "0.2.0"

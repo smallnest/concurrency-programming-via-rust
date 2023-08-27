@@ -12,6 +12,8 @@ fn main() {
     rwlock_example();
 
     once_example();
+    oncecell_example();
+    oncelock_example();
 
     barrier_example();
 

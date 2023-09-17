@@ -1,14 +1,14 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicUsize, AtomicI32, Ordering};
 use std::sync::mpsc::channel;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Barrier, Mutex};
 use std::thread;
 use std::thread::sleep;
 use std::time::Duration;
 
 use fast_threadpool::ThreadPoolConfig;
-use futures_lite::*;
 use rayon;
 use rusty_pool;
+use tokio;
 
 fn fib(n: usize) -> usize {
     if n == 0 || n == 1 {
@@ -25,6 +25,31 @@ pub fn rayon_threadpool() {
         .unwrap();
     let n = pool.install(|| fib(20));
     println!("{}", n);
+}
+
+scoped_tls::scoped_thread_local!(static POOL_DATA: Vec<i32>);
+pub fn rayon_threadpool2() {
+    let pool_data = vec![1, 2, 3];
+
+    // We haven't assigned any TLS data yet.
+    assert!(!POOL_DATA.is_set());
+
+    rayon::ThreadPoolBuilder::new()
+        .build_scoped(
+            // Borrow `pool_data` in TLS for each thread.
+            |thread| POOL_DATA.set(&pool_data, || thread.run()),
+            // Do some work that needs the TLS data.
+            |pool| {
+                pool.install(|| {
+                    assert!(POOL_DATA.is_set());
+                    assert_eq!(POOL_DATA.with(|data| data.len()), 3);
+                })
+            },
+        )
+        .unwrap();
+
+    // Once we've returned, `pool_data` is no longer borrowed.
+    drop(pool_data);
 }
 
 pub fn threadpool_example() {
@@ -44,6 +69,35 @@ pub fn threadpool_example() {
     assert_eq!(rx.iter().take(n_jobs).fold(0, |a, b| a + b), 8);
 }
 
+pub fn threadpool_example2() {
+    // create at least as many workers as jobs or you will deadlock yourself
+    let n_workers = 42;
+    let n_jobs = 23;
+    let pool = threadpool::ThreadPool::new(n_workers);
+    let an_atomic = Arc::new(AtomicUsize::new(0));
+
+    assert!(n_jobs <= n_workers, "too many jobs, will deadlock");
+
+    // create a barrier that waits for all jobs plus the starter thread
+    let barrier = Arc::new(Barrier::new(n_jobs + 1));
+    for _ in 0..n_jobs {
+        let barrier = barrier.clone();
+        let an_atomic = an_atomic.clone();
+
+        pool.execute(move || {
+            // do the heavy work
+            an_atomic.fetch_add(1, Ordering::Relaxed);
+
+            // then wait for the other threads
+            barrier.wait();
+        });
+    }
+
+    // wait for the threads to finish the work
+    barrier.wait();
+    assert_eq!(an_atomic.load(Ordering::SeqCst), /* n_jobs = */ 23);
+}
+
 pub fn rusty_pool_example() {
     let pool = rusty_pool::ThreadPool::default();
 
@@ -54,14 +108,81 @@ pub fn rusty_pool_example() {
     }
 
     pool.join();
+
+    let handle = pool.evaluate(|| {
+        thread::sleep(Duration::from_secs(5));
+        return 4;
+    });
+    let result = handle.await_complete();
+    assert_eq!(result, 4);
 }
 
+async fn some_async_fn(x: i32, y: i32) -> i32 {
+    x + y
+}
+
+async fn other_async_fn(x: i32, y: i32) -> i32 {
+    x - y
+}
+
+pub fn rusty_pool_example2() {
+    let pool = rusty_pool::ThreadPool::default();
+
+    let handle = pool.complete(async {
+        let a = some_async_fn(4, 6).await; // 10
+        let b = some_async_fn(a, 3).await; // 13
+        let c = other_async_fn(b, a).await; // 3
+        some_async_fn(c, 5).await // 8
+    });
+    assert_eq!(handle.await_complete(), 8);
+
+    let count = Arc::new(AtomicI32::new(0));
+    let clone = count.clone();
+    pool.spawn(async move {
+        let a = some_async_fn(3, 6).await; // 9
+        let b = other_async_fn(a, 4).await; // 5
+        let c = some_async_fn(b, 7).await; // 12
+        clone.fetch_add(c, Ordering::SeqCst);
+    });
+    pool.join();
+    assert_eq!(count.load(Ordering::SeqCst), 12);
+}
+
+pub fn rusty_pool_example3() {
+    let pool = rusty_pool::ThreadPool::default();
+    for _ in 0..10 {
+        pool.execute(|| thread::sleep(Duration::from_secs(10)))
+    }
+
+    // 等待所有线程变得空闲，即所有任务都完成，包括此线程调用join（）后由其他线程添加的任务，或者等待超时
+    pool.join_timeout(Duration::from_secs(5));
+
+    let count = Arc::new(AtomicI32::new(0));
+    for _ in 0..15 {
+        let clone = count.clone();
+        pool.execute(move || {
+            thread::sleep(Duration::from_secs(5));
+            clone.fetch_add(1, Ordering::SeqCst);
+        });
+    }
+
+    // 关闭并删除此“ ThreadPool”的唯一实例（无克隆），导致通道被中断，从而导致所有worker在完成当前工作后退出
+    pool.shutdown_join();
+    assert_eq!(count.load(Ordering::SeqCst), 15);
+}
 pub fn fast_threadpool_example() -> Result<(), fast_threadpool::ThreadPoolDisconnected> {
     let threadpool =
         fast_threadpool::ThreadPool::start(ThreadPoolConfig::default(), ()).into_sync_handler();
-
     assert_eq!(4, threadpool.execute(|_| { 2 + 2 })?);
 
+
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    rt.block_on(async {
+        let threadpool = fast_threadpool::ThreadPool::start(ThreadPoolConfig::default(), ()).into_async_handler();
+        assert_eq!(4, threadpool.execute(|_| { 2 + 2 }).await.unwrap());
+    });
+
+   
     Ok(())
 }
 
@@ -96,6 +217,13 @@ pub fn scheduled_thread_pool() {
 
     let _ = handle;
     receiver.recv().unwrap();
+
+    let handle = pool.execute_at_fixed_rate(Duration::from_millis(1000), Duration::from_millis(1000), || {
+        println!("Hello from a scheduled thread!");
+    });
+
+    sleep(Duration::from_secs(5));
+    handle.cancel()
 }
 
 // workerpool-rs
@@ -165,7 +293,7 @@ pub fn executor_service_example() {
         executor_service.execute(move || {
             thread::sleep(Duration::from_millis(100));
             counter.fetch_add(1, Ordering::SeqCst);
-        });
+        }).unwrap();
     }
 
     thread::sleep(Duration::from_millis(1000));
@@ -206,13 +334,11 @@ pub fn threadpool_executor_example() {
     })
     .unwrap();
     let mut exp = pool.execute(|| {}).unwrap();
-    exp.cancel();
+    exp.cancel().unwrap();
 }
 
 pub fn executors_example() {
-    use executors::crossbeam_workstealing_pool;
     use executors::*;
-    use std::sync::mpsc::channel;
 
     let n_workers = 4;
     let n_jobs = 8;

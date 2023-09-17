@@ -18,4 +18,5 @@ fn main() {
     notify_example();
     notify_example2();
     
+    tokio_rayon_example();
 }

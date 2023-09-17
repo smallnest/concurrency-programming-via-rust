@@ -6,8 +6,11 @@ fn main() {
     scoped_threadpool();
     rusty_pool_example();
     fast_threadpool_example().unwrap();
-    
     scheduled_thread_pool();
-
-    unblocking_smol().unwrap();
+    workerpool_rs_example();
+    poolite_example();
+    poolite_example2();
+    executor_service_example();
+    threadpool_executor_example();
+    executors_example();
 }

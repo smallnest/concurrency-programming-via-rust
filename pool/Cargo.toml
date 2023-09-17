@@ -6,11 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+executor-service = "0.2.2"
+executors = "0.9.0"
 fast-threadpool = "0.3.0"
 futures-lite = "1.12.0"
+poolite = "0.7.1"
 rayon = "1.5.3"
 rusty_pool = "0.7.0"
 scheduled-thread-pool = "0.2.6"
 scoped_threadpool = "0.1.9"
 smol = "1.2.5"
 threadpool = "1.8.1"
+threadpool-executor = "0.3.2"
+workerpool-rs = "0.2.1"

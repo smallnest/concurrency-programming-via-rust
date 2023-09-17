@@ -176,3 +176,25 @@ pub fn watch_example() {
     });
 
 }
+
+/// 实现fib
+pub fn fib(n: usize) -> usize {
+    if n == 0 || n == 1 {
+        return n;
+    }
+
+    return fib(n-1) + fib(n-2);
+}
+
+pub fn tokio_rayon_example() {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+
+    rt.block_on(async {
+        let nft = tokio_rayon::spawn(|| {
+            fib(20)
+          }).await;
+          
+          assert_eq!(nft, 6765);
+    })
+
+}

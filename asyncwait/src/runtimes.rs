@@ -4,9 +4,12 @@ use futures::try_join;
 use futures::StreamExt;
 use futures::{
     future::FutureExt, // for `.fuse()`
+    join,
     pin_mut,
     select,
 };
+
+use async_std::task;
 
 pub fn tokio_async() {
     let rt = tokio::runtime::Runtime::new().unwrap();
@@ -54,11 +57,22 @@ pub fn async_std() {
     async_std::task::block_on(async { println!("Hello from async_std") })
 }
 
-pub fn smol_async() {
-    smol::block_on(async { println!("Hello from smol") })
+pub fn async_std_task() {
+    task::block_on(async {
+        task::spawn(get_book());
+        task::spawn(get_music());
+
+        println!("in async_std_task");
+    });
 }
 
+pub fn smol_async() {
+    smol::block_on(async { println!("Hello from smol") });
+}
+
+#[derive(Debug)]
 struct Book();
+#[derive(Debug)]
 struct Music();
 
 async fn get_book() -> Result<Book, String> {
@@ -69,14 +83,24 @@ async fn get_music() -> Result<Music, String> {
     println!("in get_music");
     Ok(Music())
 }
-async fn get_book_and_music() -> Result<(Book, Music), String> {
-    let book_fut = get_book();
-    let music_fut = get_music();
-    try_join!(book_fut, music_fut)
+
+pub fn try_join() {
+    futures_lite::future::block_on(async {
+        let book_fut = get_book();
+        let music_fut = get_music();
+        println!("try_join: {:?}", try_join!(book_fut, music_fut));
+    });
 }
 
 pub fn join() {
-    futures_lite::future::block_on(async { get_book_and_music().await }).unwrap();
+    let a = async { 1 };
+    let b = async { 2 };
+    let c = async { 3 };
+
+    futures_lite::future::block_on(async {
+        println!("join: {:?}", join!(get_book(), get_music()));
+        println!("join: {:?}", join!(a, b, c));
+    });
 }
 
 pub fn select() {
@@ -110,5 +134,23 @@ pub fn futures_select() {
             };
         }
         assert_eq!(total, 10);
+    });
+}
+
+pub fn smol_zip() {
+    smol::block_on(async {
+        use smol::future::{try_zip, zip, FutureExt};
+
+        let future1 = async { 1 };
+        let future2 = async { 2 };
+
+        let result = zip(future1, future2);
+        println!("smol_zip: {:?}", result.await);
+
+        let future1 = async { Ok::<i32, i32>(1) };
+        let future2 = async { Err::<i32, i32>(2) };
+
+        let result = try_zip(future1, future2).await;
+        println!("smol_try_zip: {:?}", result);
     });
 }

@@ -1,4 +1,7 @@
-#![feature(once_cell)]
+#![feature(lazy_cell)]
+#![feature(thin_box)]
+#![feature(new_uninit)]
+#![feature(cell_update)]
 
 pub mod cow;
 pub mod r#box;

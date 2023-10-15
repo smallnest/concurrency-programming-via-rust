@@ -2,7 +2,7 @@
 
 use std::cell::*;
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::sync::LazyLock;
 
 // Shareable mutable containers.
 // Shareable mutable containers exist to permit mutability in a controlled manner, even in the presence of aliasing.
@@ -27,6 +27,8 @@ pub fn cell_example() {
     let _ = my_struct.regular_field;
     // my_struct.regular_field = 100;
     my_struct.special_field.set(100);
+
+    my_struct.special_field.update(|v| v + 1);
 }
 
 pub fn refcell_example() {
@@ -53,23 +55,7 @@ pub fn refcell_example() {
     println!("special_field = {}", my_struct.special_field.borrow());
 }
 
-pub fn rc_refcell_example() {
-    let shared_map: Rc<RefCell<_>> = Rc::new(RefCell::new(HashMap::new()));
-    // Create a new block to limit the scope of the dynamic borrow
-    {
-        let mut map: RefMut<_> = shared_map.borrow_mut();
-        map.insert("africa", 92388);
-        map.insert("kyoto", 11837);
-        map.insert("piccadilly", 11826);
-        map.insert("marbles", 38);
-    }
 
-    // Note that if we had not let the previous borrow of the cache fall out
-    // of scope then the subsequent borrow would cause a dynamic thread panic.
-    // This is the major hazard of using `RefCell`.
-    let total: i32 = shared_map.borrow().values().sum();
-    println!("{total}");
-}
 
 pub fn once_cell_example() {
     let cell = OnceCell::new();
@@ -90,78 +76,18 @@ pub fn lazy_cell_example() {
     println!("{}", *lazy);
 }
 
-pub fn myrc_example() {
-    let s = example::Rc::new("hello world");
-    let s1 = s.clone();
+static HASHMAP: LazyLock<HashMap<i32, String>> = LazyLock::new(|| {
+    println!("initializing");
+    let mut m = HashMap::new();
+    m.insert(13, "Spica".to_string());
+    m.insert(74, "Hoyten".to_string());
+    m
+});
 
-    let v = s1.value();
-    println!("myrc value: {}", v);
-}
-
-pub mod example {
-    use std::cell::Cell;
-    use std::marker::PhantomData;
-    use std::process::abort;
-    use std::ptr::NonNull;
-
-    pub struct Rc<T: ?Sized> {
-        ptr: NonNull<RcBox<T>>,
-        phantom: PhantomData<RcBox<T>>,
-    }
-
-    impl<T> Rc<T> {
-        pub fn new(t: T) -> Self {
-            let ptr = Box::new(RcBox {
-                strong: Cell::new(1),
-                refcount: Cell::new(1),
-                value: t,
-            });
-            let ptr = NonNull::new(Box::into_raw(ptr)).unwrap();
-            Self {
-                ptr: ptr,
-                phantom: PhantomData,
-            }
-        }
-
-        pub fn value(&self) -> &T {
-            &self.inner().value
-        }
-    }
-
-
-    struct RcBox<T: ?Sized> {
-        strong: Cell<usize>,
-        refcount: Cell<usize>,
-        value: T,
-    }
-
-    impl<T: ?Sized> Clone for Rc<T> {
-        fn clone(&self) -> Rc<T> {
-            self.inc_strong();
-            Rc {
-                ptr: self.ptr,
-                phantom: PhantomData,
-            }
-        }
-    }
-
-    trait RcBoxPtr<T: ?Sized> {
-        fn inner(&self) -> &RcBox<T>;
-
-        fn strong(&self) -> usize {
-            self.inner().strong.get()
-        }
-
-        fn inc_strong(&self) {
-            self.inner()
-                .strong
-                .set(self.strong().checked_add(1).unwrap_or_else(|| abort()));
-        }
-    }
-
-    impl<T: ?Sized> RcBoxPtr<T> for Rc<T> {
-        fn inner(&self) -> &RcBox<T> {
-            unsafe { self.ptr.as_ref() }
-        }
-    }
+pub fn lazy_lock() {
+    println!("ready");
+    std::thread::spawn(|| {
+        println!("{:?}", HASHMAP.get(&13));
+    }).join().unwrap();
+    println!("{:?}", HASHMAP.get(&74));
 }

@@ -84,3 +84,4 @@ pub fn mutex_example3_drop() {
 
     println!("Result: {:?}", res_mutex.lock().unwrap());
 }
+

@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 beef = "0.5.2"
+once_cell = "1.18.0"

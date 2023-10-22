@@ -54,3 +54,16 @@ pub fn oncelock_example() {
 
 	println!("OnceLock: {}", value.is_some())
 }
+
+use std::{sync::Mutex, collections::HashMap};
+use once_cell::sync::Lazy;
+static GLOBAL_DATA: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| {
+    let mut m = HashMap::new();
+    m.insert(13, "Spica".to_string());
+    m.insert(74, "Hoyten".to_string());
+    Mutex::new(m)
+});
+
+pub fn once_cell_example() {
+	println!("{:?}", GLOBAL_DATA.lock().unwrap());
+}

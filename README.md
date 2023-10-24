@@ -25,42 +25,44 @@ Introduces [async feature](asyncwait/src/main.rs).
 
 ### chapter 4: synchronization primitives
 
-Introduces synchronization primitives contains [containers](container_primitive/src/main.rs) and [primitives](sync_primitive/src/main.rs) in std lib.
+Introduces synchronization primitives contains [containers](container_primitive/src/main.rs) 
 
-### chapter 5: concurrency collections
+### chapter 5: basic concurrency primitives
+Introduction of basic concurrency [primitives](sync_primitive/src/main.rs) in std lib.
+
+### chapter 6: concurrency collections
 
 Introduces [concurrency collections](collections/src/main.rs) in std lib.
 
-### chapter 6: process
+### chapter 7: process
 
 Introduces starting and executing a new [process](process/src/main.rs) in the easy way.
 
-### chapter 7: channel
+### chapter 8: channel
 
 Introduces each [channels](channel/src/main.rs) such as mpsc, mpmc and broadcasters.
 
-### chapter 8: timer/ticker
+### chapter 9: timer/ticker
 
 Introduces [timer and ticker](timer_examples/src/main.rs).
 
-### chapter 9: parking_lot
+### chapter 10: parking_lot
 
 Introduces [parking_lot](parking_lot_examples/src/main.rs).
 
-### chapter 10: crossbeam
+### chapter 11: crossbeam
 
 Introduces [crossbeam](crossbeam_examples/src/main.rs).
 
-### chapter 11: rayon
+### chapter 12: rayon
 
 Introduces [rayon](rayon_examples/src/main.rs).
 
-### chapter 12: tokio
+### chapter 13: tokio
 
 Introduces [tokio](tokio_examples/src/main.rs).
 
-
-### chapter n: special
+### chapter 14: special
 
 some special synchronization primitives and concurrency libs only for special single purpose.
 

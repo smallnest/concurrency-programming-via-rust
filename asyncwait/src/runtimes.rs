@@ -139,7 +139,7 @@ pub fn futures_select() {
 
 pub fn smol_zip() {
     smol::block_on(async {
-        use smol::future::{try_zip, zip, FutureExt};
+        use smol::future::{try_zip, zip};
 
         let future1 = async { 1 };
         let future2 = async { 2 };

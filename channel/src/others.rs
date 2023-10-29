@@ -74,8 +74,6 @@ pub fn crossfire_mpmc() {
     });
 }
 
-
-
 // has issues.
 pub fn broadcaster() {
     // let rt = tokio::runtime::Runtime::new().unwrap();
@@ -105,6 +103,35 @@ pub fn flume_example() {
     let received: u32 = rx.iter().sum();
 
     assert_eq!((0..10).sum::<u32>(), received);
+}
+
+pub fn flume_select() {
+    let (tx0, rx0) = flume::unbounded();
+    let (tx1, rx1) = flume::unbounded();
+
+    std::thread::spawn(move || {
+        tx0.send(true).unwrap();
+        tx1.send(42).unwrap();
+    });
+
+    flume::Selector::new()
+        .recv(&rx0, |b| println!("Received {:?}", b))
+        .recv(&rx1, |n| println!("Received {:?}", n))
+        .wait();
+}
+
+pub fn flume_async() {
+    let rt = tokio::runtime::Runtime::new().unwrap();
+
+    let (tx, rx) = flume::unbounded();
+
+    rt.block_on(async move {
+        tokio::spawn(async move {
+            tx.send_async(5).await.unwrap();
+        });
+
+        println!("flume async rx: {}", rx.recv_async().await.unwrap());
+    });
 }
 
 pub fn async_channel_example() {
@@ -194,7 +221,7 @@ pub fn kanal_example() {
     });
 
     let received: u32 = rx.sum();
-    
+
     println!("received sum: {}", received);
 }
 
@@ -210,4 +237,14 @@ pub fn kanal_async_example() {
 
         println!("rx: {}", rx.recv().await.unwrap());
     });
+}
+
+pub fn kanal_oneshot_example() {
+    let (tx, rx) = kanal::oneshot();
+
+    thread::spawn(move || {
+        tx.send(5).unwrap();
+    });
+
+    println!("kanal oneshot rx: {}", rx.recv().unwrap());
 }

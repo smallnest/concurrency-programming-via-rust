@@ -4,6 +4,7 @@ pub use others::*;
 use std::sync::mpsc;
 use std::sync::mpsc::sync_channel;
 use std::thread;
+use std::time::Duration;
 
 pub fn mpsc_example1() {
     let (tx, rx) = mpsc::channel();
@@ -59,4 +60,28 @@ pub fn mpsc_example4() {
     }
 
     println!("mpsc_example4 completed");
+}
+
+pub fn mpsc_drop_example() {
+        // 创建一个有边界的多生产者、单消费者的通道
+        let (sender, receiver) = mpsc::channel::<i32>(); // 指定通道中传递的数据类型为 i32
+
+        // 启动三个生产者线程
+        for i in 0..3 {
+            let tx = sender.clone(); // 克隆发送端，每个线程都拥有独立的发送端
+            thread::spawn(move || {
+                thread::sleep(Duration::from_secs(1)); // 等待所有线程启动完毕
+                tx.send(i).expect("Failed to send message");
+            });
+        }
+        
+        
+        // 丢弃发送端，不影响clone
+        drop(sender); 
+      
+    
+        // 主线程作为消费者，接收来自生产者线程的消息
+        for received_message in receiver {
+            println!("Received message: {}", received_message);
+        }
 }

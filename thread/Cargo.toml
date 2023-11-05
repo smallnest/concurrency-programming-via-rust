@@ -16,6 +16,7 @@ go-spawn = "0.1.2"
 num_threads = "0.1.6"
 parking = "2.0.0"
 num_cpus = "1.13.1"
+scopeguard = "1.2.0"
 
 [target.'cfg(any(windows, linux))'.dependencies] 
 affinity = "0.1.2"

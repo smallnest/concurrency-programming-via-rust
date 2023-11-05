@@ -10,5 +10,5 @@ fn main() {
     futures_timer_example();
 
     async_io_timer_example();
-    async_io_interval();
+    async_io_interval
 }

@@ -15,6 +15,7 @@ use send_wrapper::SendWrapper;
 use thread_amount::thread_amount;
 use thread_control::*;
 use thread_priority::*;
+use scopeguard::{guard, defer,defer_on_unwind, defer_on_success};
 
 #[cfg(not(target_os = "macos"))]
 use affinity::*;
@@ -496,4 +497,13 @@ pub fn info() {
 
     let count = num_cpus::get();
     println!("num_cpus: {}", count);
+}
+
+pub fn scopeguard_defer() {
+    defer! {
+        println!("scopeguard: Called at return or panic");
+    }
+    println!("scopeguard: Called first before panic");
+    // panic!();
+    println!("scopeguard: Called first after panic");
 }

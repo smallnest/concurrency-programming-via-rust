@@ -8,7 +8,4 @@ fn main() {
     safina_timer_example();
 
     futures_timer_example();
-
-    async_io_timer_example();
-    async_io_interval();
 }

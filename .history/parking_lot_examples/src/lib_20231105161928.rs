@@ -54,45 +54,9 @@ pub fn mutex_example2() {
 }
 
 pub fn mutex_example3() {
-    const N: usize = 10;
 
-    let mutex = Arc::new(Mutex::new(()));
-
-    let handles: Vec<_> = (0..N)
-        .map(|i| {
-            let mutex = Arc::clone(&mutex);
-            thread::spawn(move || match mutex.try_lock() {
-                Some(_guard) => println!("thread {} got the lock", i),
-                None => println!("thread {} did not get the lock", i),
-            })
-        })
-        .collect();
-
-    for handle in handles {
-        handle.join().unwrap();
-    }
-
-    println!("mutex_example3: done");
 }
 
-pub fn mutex_example4() {
-    use parking_lot::Mutex;
-    use std::mem;
-
-    let mutex = Mutex::new(1);
-
-    // 使用mem::forget持有锁直到结束
-    let _guard = mem::forget(mutex.lock());
-
-    // 一些访问受mutex保护的数据的代码
-
-    // 在结束前解锁mutex
-    unsafe {
-        mutex.force_unlock();
-    }
-
-    println!("mutex_example4: done");
-}
 
 pub fn fairmutex_example() {
     const N: usize = 10;
@@ -177,6 +141,7 @@ pub fn once_example() {
         }
     }
 
+
     let handle = thread::spawn(|| {
         println!("thread 1 get_cached_val: {}", get_cached_val());
     });
@@ -185,6 +150,7 @@ pub fn once_example() {
 
     handle.join().unwrap();
 }
+
 
 pub fn condvar_example() {
     use std::sync::Condvar;

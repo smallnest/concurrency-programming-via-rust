@@ -87,11 +87,7 @@ pub fn mutex_example4() {
     // 一些访问受mutex保护的数据的代码
 
     // 在结束前解锁mutex
-    unsafe {
-        mutex.force_unlock();
-    }
-
-    println!("mutex_example4: done");
+    unsafe {mutex.force_unlock();}
 }
 
 pub fn fairmutex_example() {

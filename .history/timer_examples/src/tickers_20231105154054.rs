@@ -8,9 +8,10 @@ pub fn ticker_example() {
     }
 }
 
-pub fn async_io_interval() {
+pub fn async_io_timer_example() {
     use async_io::Timer;
     use futures_lite::StreamExt;
+    use std::time::Duration;
 
     let mut count = 0;
 

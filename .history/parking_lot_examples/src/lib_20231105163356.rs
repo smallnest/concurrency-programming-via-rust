@@ -90,8 +90,6 @@ pub fn mutex_example4() {
     unsafe {
         mutex.force_unlock();
     }
-
-    println!("mutex_example4: done");
 }
 
 pub fn fairmutex_example() {

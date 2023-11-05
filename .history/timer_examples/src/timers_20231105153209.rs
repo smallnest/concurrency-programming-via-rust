@@ -97,14 +97,14 @@ pub fn futures_timer_example() {
     });
 }
 
-pub fn async_io_timer_example() {
-    use async_io::Timer;
+func smol_timer_example() {
+    use smol::Timer;
     use std::time::Duration;
 
-    let timer = Timer::after(Duration::from_secs(1));
-
     smol::block_on(async {
-        timer.await;
-        println!("一秒过去了");
+        let timer = Timer::new();
+        let delay = Duration::from_secs(1);
+        timer.delay(delay).await;
+        println!("重复定时任务触发！");
     });
 }

@@ -8,16 +8,15 @@ pub fn ticker_example() {
     }
 }
 
-pub fn async_io_interval() {
-    use async_io::Timer;
-    use futures_lite::StreamExt;
-
+pub fn smol_timer_example2() {
+    use smol::Timer;
+    use std::time::Duration;
     let mut count = 0;
 
     smol::block_on(async {
-        let mut tick = Timer::interval(Duration::from_secs(1));
+        let mut timer = Timer::interval(Duration::from_secs(1));
 
-        while let Some(_) = tick.next().await {
+        while let Some(_) = timer.next().await {
             println!("第{}秒", count);
             count += 1;
 

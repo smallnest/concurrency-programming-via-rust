@@ -97,8 +97,8 @@ pub fn futures_timer_example() {
     });
 }
 
-pub fn async_io_timer_example() {
-    use async_io::Timer;
+pub fn smol_timer_example() {
+    use smol::Timer;
     use std::time::Duration;
 
     let timer = Timer::after(Duration::from_secs(1));

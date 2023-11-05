@@ -36,7 +36,8 @@ fn main() {
     use_affinity();
 
     go_thread();
-
+    scopeguard_defer();
+    
     park_thread();
 
     panic_example();

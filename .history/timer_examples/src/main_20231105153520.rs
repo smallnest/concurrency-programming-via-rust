@@ -9,6 +9,6 @@ fn main() {
 
     futures_timer_example();
 
-    async_io_timer_example();
-    async_io_interval();
+    smol_timer_example();
+    smol_timer_example2();
 }

@@ -96,15 +96,3 @@ pub fn futures_timer_example() {
         }
     });
 }
-
-pub fn async_io_timer_example() {
-    use async_io::Timer;
-    use std::time::Duration;
-
-    let timer = Timer::after(Duration::from_secs(1));
-
-    smol::block_on(async {
-        timer.await;
-        println!("一秒过去了");
-    });
-}

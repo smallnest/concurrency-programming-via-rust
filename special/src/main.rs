@@ -61,6 +61,7 @@ fn main() {
     sync_cow_example().unwrap();
     arc_swap_example();
 
+    atomic_waker_example();
 }
 
 

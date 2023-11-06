@@ -48,6 +48,7 @@ impl Future for Flag {
     }
 }
 
+// extraced from futures::task::AtomicWaker
 pub fn atomic_waker_example() {
     smol::block_on(async {
         let flag = Flag::new();

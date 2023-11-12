@@ -1,4 +1,5 @@
 use crossbeam_examples::*;
+use std::thread;
 
 fn main() {
     atomic_cell_example();

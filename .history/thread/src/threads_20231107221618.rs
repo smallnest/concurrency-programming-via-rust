@@ -532,5 +532,6 @@ pub fn join_all_example() {
         println!("Hello from a thread2!");
     });
 
-    join_all!(handle1,handle2);
+    handle1.join().unwrap();
+    handle2.join().unwrap();
 }

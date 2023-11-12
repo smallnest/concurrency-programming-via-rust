@@ -1,4 +1,4 @@
-use crossbeam::atomic::AtomicCell;
+use crossbeam::atomic::{AtomicCell};
 
 pub fn atomic_cell_example() {
     let a = AtomicCell::new(0i32);

@@ -44,6 +44,4 @@ fn main() {
     panic_caught_example();
 
     info();
-
-    join_all_example();
 }

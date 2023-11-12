@@ -1,8 +1,6 @@
 use crossbeam_examples::*;
-
 fn main() {
     atomic_cell_example();
-    atomic_consume_example();
 
     crossbeam_deque_example();  
     arrayqueue_example();

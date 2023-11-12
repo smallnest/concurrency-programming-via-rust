@@ -1,4 +1,5 @@
-use crossbeam::atomic::AtomicCell;
+use crossbeam::atomic::{AtomicCell,AtomicConsume};
+use std::thread;
 
 pub fn atomic_cell_example() {
     let a = AtomicCell::new(0i32);

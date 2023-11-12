@@ -57,7 +57,6 @@ pub fn start_two_threads() {
     handle2.join().unwrap();
 }
 
-
 pub fn start_n_threads() {
     const N: isize = 10;
 
@@ -443,9 +442,7 @@ pub fn use_affinity() {
         affinity::get_thread_affinity().unwrap()
     );
 }
-fn foo() {
-    println!("foo");
-}
+
 pub fn go_thread() {
     let counter = Arc::new(AtomicI64::new(0));
     let counter_cloned = counter.clone();
@@ -456,8 +453,6 @@ pub fn go_thread() {
             counter_cloned.fetch_add(1, Ordering::SeqCst);
         }
     }
-
-    go!(foo());
 
     // Join the most recent thread spawned by `go_spawn` that has not yet been joined.
     assert!(join!().is_ok());
@@ -511,26 +506,4 @@ pub fn scopeguard_defer() {
     println!("scopeguard: Called first before panic");
     // panic!();
     println!("scopeguard: Called first after panic");
-}
-
-
-
-
-macro_rules! join_all {
-    ($($x:ident),*) => {
-        $($x.join().unwrap();)*
-    }
-}
-
-
-pub fn join_all_example() {
-    let handle1 = thread::spawn(|| {
-        println!("Hello from a thread1!");
-    });
-
-    let handle2 = thread::spawn(|| {
-        println!("Hello from a thread2!");
-    });
-
-    join_all!(handle1,handle2);
 }

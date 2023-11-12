@@ -1,5 +1,4 @@
 use crossbeam_examples::*;
-
 fn main() {
     atomic_cell_example();
     atomic_consume_example();

@@ -57,7 +57,6 @@ pub fn start_two_threads() {
     handle2.join().unwrap();
 }
 
-
 pub fn start_n_threads() {
     const N: isize = 10;
 
@@ -511,26 +510,4 @@ pub fn scopeguard_defer() {
     println!("scopeguard: Called first before panic");
     // panic!();
     println!("scopeguard: Called first after panic");
-}
-
-
-
-
-macro_rules! join_all {
-    ($($x:ident),*) => {
-        $($x.join().unwrap();)*
-    }
-}
-
-
-pub fn join_all_example() {
-    let handle1 = thread::spawn(|| {
-        println!("Hello from a thread1!");
-    });
-
-    let handle2 = thread::spawn(|| {
-        println!("Hello from a thread2!");
-    });
-
-    join_all!(handle1,handle2);
 }

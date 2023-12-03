@@ -85,3 +85,7 @@ pub fn rayon_threadpool_example() {
 
     println!("{}", n);
 }
+
+pub fn rayon_global_thread_pool_example() {
+        rayon::ThreadPoolBuilder::new().num_threads(22).build_global().unwrap();
+}

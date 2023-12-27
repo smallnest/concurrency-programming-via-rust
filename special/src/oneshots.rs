@@ -26,7 +26,7 @@ pub fn async_oneshot_example() {
 }
 
 pub fn catty_example() {
-    let (sender, mut receiver) = catty::oneshot();
+    let (sender, mut receiver) = ::oneshot();
     let sender = thread::spawn(move || {
         sender.send(1).unwrap();
     });
